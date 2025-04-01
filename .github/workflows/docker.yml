@@ -1,0 +1,29 @@
+name: Docker Workflow
+
+on:
+  pull_request:
+    paths:
+      - "docker-compose*.yml"
+
+jobs:
+  validate:
+    name: Validate Docker Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Docker and Docker Compose Versions
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Validate Docker Compose (Development)
+        run: |
+          cd $GITHUB_WORKSPACE # Ensures we're in the root directory
+          docker compose -f ./docker-compose-dev.yml config
+
+      - name: Validate Docker Compose (Production)
+        run: |
+          cd $GITHUB_WORKSPACE # Ensures we're in the root directory
+          docker compose -f ./docker-compose-prod.yml  config

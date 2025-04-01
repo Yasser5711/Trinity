@@ -1,0 +1,72 @@
+name: Back Workflow
+
+on:
+  pull_request:
+    paths:
+      - "back/**"
+  workflow_run:
+    workflows: ["Lint Commit Messages"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    name: ✅ Run WebhookGithubDiscord Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install dependencies
+        working-directory: webhook_github
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: 🧪 Run tests with coverage
+        working-directory: webhook_github
+        run: |
+          pytest --cov-report=xml --cov-report=json
+
+      - name: 📊 Check coverage threshold (85%)
+        working-directory: webhook_github
+        run: |
+          THRESHOLD=85
+          COVERAGE_FILE="coverage.json"
+
+          if [ ! -f "$COVERAGE_FILE" ]; then
+            echo "🚨 Coverage file not found: $COVERAGE_FILE"
+            exit 1
+          fi
+
+          COVERAGE=$(jq -r '.totals.percent_covered' "$COVERAGE_FILE" | cut -d'.' -f1)
+          echo "📊 Code coverage: ${COVERAGE}%"
+
+          if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
+            echo "❌ Coverage below threshold (${THRESHOLD}%). Failing."
+            exit 1
+          fi
+        shell: bash
+
+      - name: 📤 Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: 📁 coverage-report
+          path: webhook_github/coverage.xml
+
+      - name: 📝 Report Coverage in PR
+        if: always()
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: webhook_github/coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,24 @@
+fastapi
+uvicorn
+gunicorn
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pytest
+httpx
+pytest-asyncio
+flake8
+black
+isort
+# psycopg2
+alembic
+bcrypt
+python-jose
+passlib
+pytest-cov
+pydantic[email]
+requests
+fpdf2
+pytest-mock
+factory_boy
+PyPDF2

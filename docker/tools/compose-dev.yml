@@ -1,0 +1,25 @@
+services:
+  pgadmin:
+    build:
+      context: ./pgadmin
+      dockerfile: DockerFile
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_SERVER_JSON_FILE: "/pgadmin4/servers.json"
+
+    ports:
+      - "8003:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    profiles:
+      - back
+    networks:
+      - app_network
+    restart: unless-stopped
+
+volumes:
+  pgadmin_data:

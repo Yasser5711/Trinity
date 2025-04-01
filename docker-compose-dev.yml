@@ -1,0 +1,10 @@
+include:
+  - path: "docker/db/compose-dev.yml"
+  - path: "docker/tools/compose-dev.yml"
+  - path: "docker/back/compose-dev.yml"
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:

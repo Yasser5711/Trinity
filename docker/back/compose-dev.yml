@@ -1,0 +1,25 @@
+services:
+  back:
+    container_name: back
+    build:
+      context: ./back
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8001:8000"
+    environment:
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
+      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
+      - PYTHONPATH=/app
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_SECRET=${PAYPAL_SECRET}
+      - PAYPAL_BASE_URL=${PAYPAL_BASE_URL}
+    volumes:
+      - ./back:/app
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    profiles:
+      - back
+    networks:
+      - app_network

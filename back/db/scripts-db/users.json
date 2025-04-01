@@ -1,0 +1,25 @@
+[
+    {
+    "first_name": "fab",
+    "last_name": "fab",
+    "email": "fab@fab.com",
+    "password": "fab",
+    "phone":"0606060606"
+
+  },{
+    "first_name": "vicous",
+    "last_name": "vicous",
+    "email": "vicous@vicous.com",
+    "password": "vicous",
+    "phone":"0606060606"
+
+  },
+  {
+    "first_name": "mehh",
+    "last_name": "mehh",
+    "email": "meh@meh.com",
+    "password": "mehh",
+    "phone":"0606060606"
+
+  }
+]

@@ -1,0 +1,16 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']  
+exclude = '''
+/(
+    \.git
+    | \.mypy_cache
+    | \.pytest_cache
+    | __pycache__
+    | migrations
+)/
+'''
+[tool.isort]
+profile = "black"  # Makes isort compatible with Black
+line_length = 88
+known_third_party = ["fastapi", "pydantic", "uvicorn"]  # Add other packages as needed

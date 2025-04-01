@@ -1,0 +1,23 @@
+[
+    {
+      "user_id": 3,
+      "address_line": "123 Main Street, Apt 4B",
+      "city": "New York",
+      "zip_code": "10001",
+      "country": "USA"
+    },
+    {
+      "user_id": 4,
+      "address_line": "456 Oak Avenue, Suite 12",
+      "city": "Los Angeles",
+      "zip_code": "90001",
+      "country": "USA"
+    },
+    {
+      "user_id": 5,
+      "address_line": "789 Pine Road",
+      "city": "Chicago",
+      "zip_code": "60601",
+      "country": "USA"
+    } 
+]
