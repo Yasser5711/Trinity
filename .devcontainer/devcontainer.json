@@ -1,18 +1,47 @@
 {
-  "name": "Python from container",
-  "dockerComposeFile": "../docker-compose-dev.yml",
+  "name": "FastAPI Dev",
+  "dockerComposeFile": ["../docker-compose-dev.yml"],
   "service": "back",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/app",
 
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
-  ],
   "customizations": {
     "vscode": {
-      "extensions": ["ms-python.python", "ms-python.vscode-pylance"],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python3.11"
-      }
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "python.testing.pytestPath": "pytest",
+        "pytest.command": [
+          "eval",
+          "$(docker-machine env default);",
+          "docker-compose",
+          "run",
+          "--no-deps",
+          "api",
+          "pytest"
+        ],
+        "python.linting.enabled": true,
+        "python.linting.ruffEnabled": true,
+        "python.formatting.provider": "ruff",
+        "editor.formatOnSave": true,
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "always"
+        },
+        "python.analysis.typeCheckingMode": "off"
+      },
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "Cameron.vscode-pytest"
+      ]
     }
-  }
+  },
+
+  "postCreateCommand": "pip install -r requirements.txt"
 }

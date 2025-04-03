@@ -8,8 +8,7 @@ def test_get_product_by_id_service(db_session, sample_product):
 
 
 def test_get_product_by_barcode_service(db_session, sample_product):
-    product = product_service.get_product_by_barcode(
-        db_session, sample_product.barCode)
+    product = product_service.get_product_by_barcode(db_session, sample_product.barCode)
     assert product.id == sample_product.id
 
 
@@ -25,7 +24,7 @@ def test_create_product_service(db_session, sample_category):
         quantity="500g",
         nutrition={},
         ingredients="stuff",
-        allergens=""
+        allergens="",
     )
     created = product_service.create_product(db_session, data)
     assert created.name == "ServiceProduct"
@@ -33,23 +32,19 @@ def test_create_product_service(db_session, sample_category):
 
 def test_update_product_service(db_session, sample_product):
     updated = product_service.update_product(
-        db_session,
-        sample_product.id,
-        ProductUpdate(price=99.9)
+        db_session, sample_product.id, ProductUpdate(price=99.9)
     )
     assert updated.price == 99.9
 
 
 def test_delete_product_service(db_session, sample_product):
     product_service.delete_product(db_session, sample_product.id)
-    assert product_service.get_product_by_id(
-        db_session, sample_product.id) is None
+    assert product_service.get_product_by_id(db_session, sample_product.id) is None
 
 
 def test_get_products_pagination_and_filter(db_session, sample_product):
     filters = {"name": sample_product.name}
-    result = product_service.get_products(
-        db_session, filters, limit=10, page=1)
+    result = product_service.get_products(db_session, filters, limit=10, page=1)
     assert "products" in result
     assert result["total"] >= 1
 

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
-from db.models.models import Cart, CartItem, Product, Invoice, InvoiceItem, Stock
+
+from db.models.models import Cart, CartItem, Invoice, InvoiceItem, Product, Stock
 
 
 def get_cart_by_user(db: Session, user_id: int):
@@ -55,17 +56,18 @@ def delete_all_cart_items(db: Session, cart_id: int):
 
 
 def get_user_invoices(db: Session, user_id: int):
-    return db.query(Invoice).filter(
-        Invoice.user_id == user_id
-    ).options(
-        joinedload(Invoice.items).joinedload(InvoiceItem.product)
-    ).all()
+    return (
+        db.query(Invoice)
+        .filter(Invoice.user_id == user_id)
+        .options(joinedload(Invoice.items).joinedload(InvoiceItem.product))
+        .all()
+    )
 
 
 def get_invoice_by_id(db: Session, invoice_id: int, user_id: int):
-    return db.query(Invoice).filter(
-        Invoice.id == invoice_id,
-        Invoice.user_id == user_id
-    ).options(
-        joinedload(Invoice.items).joinedload(InvoiceItem.product)
-    ).first()
+    return (
+        db.query(Invoice)
+        .filter(Invoice.id == invoice_id, Invoice.user_id == user_id)
+        .options(joinedload(Invoice.items).joinedload(InvoiceItem.product))
+        .first()
+    )

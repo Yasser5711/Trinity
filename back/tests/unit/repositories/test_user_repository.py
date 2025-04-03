@@ -23,7 +23,7 @@ def test_create_and_delete_user(db_session):
         last_name="Me",
         email="deleteme@example.com",
         phone="0000000000",
-        password="hashed"
+        password="hashed",  # noqa: S106
     )
     created = user_repository.create_user(db_session, user)
     assert created.id

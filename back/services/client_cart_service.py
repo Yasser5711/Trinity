@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import CartItem, Invoice, InvoiceItem
 from db.schemas.cart_items_schemas import CartItemCreate, CartItemUpdate
 from repositories import client_cart_repository
@@ -18,11 +19,7 @@ def add_item_to_cart(db: Session, user_id: int, data: CartItemCreate):
 
     cart = get_or_create_cart(db, user_id)
 
-    item = CartItem(
-        cart_id=cart.id,
-        product_id=data.product_id,
-        quantity=data.quantity
-    )
+    item = CartItem(cart_id=cart.id, product_id=data.product_id, quantity=data.quantity)
     return client_cart_repository.add_cart_item(db, item)
 
 
@@ -71,7 +68,7 @@ def checkout(db: Session, user_id: int):
             invoice_id=invoice.id,
             product_id=item.product_id,
             quantity=item.quantity,
-            unit_price=item.product.price
+            unit_price=item.product.price,
         )
         client_cart_repository.add_invoice_item(db, invoice_item)
 

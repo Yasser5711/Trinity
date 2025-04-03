@@ -1,4 +1,5 @@
 import factory
+
 from db.models.models import Address
 from tests.factories.user_factory import UserFactory
 

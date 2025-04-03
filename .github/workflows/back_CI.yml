@@ -14,9 +14,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  test:
-    name: ✅ Run WebhookGithubDiscord Tests
+  lint:
+    name: 🔍 Ruff Lint Check
     runs-on: ubuntu-latest
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
@@ -26,20 +27,52 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: 📦 Install Ruff
+        working-directory: back
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: 🧹 Run Ruff
+        working-directory: back
+        run: |
+          ruff check . --output-format=github
+
+  test:
+    name: ✅ Run Back Tests
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Set environment variables
+        run: |
+          export DATABASE_USER=user
+          export DATABASE_PASSWORD=password
+          export DATABASE_NAME=dev_db
+          export DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost:5432/${DATABASE_NAME}
+          export ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost:5432/${DATABASE_NAME}
+          echo "✅ Exported DB environment variables"
       - name: 📦 Install dependencies
-        working-directory: webhook_github
+        working-directory: back
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: 🧪 Run tests with coverage
-        working-directory: webhook_github
+      - name: 🧪 Run Tests with Coverage
+        working-directory: back
         run: |
-          pytest --cov-report=xml --cov-report=json
+          pytest --cov-config=coverage.ini
 
-      - name: 📊 Check coverage threshold (85%)
-        working-directory: webhook_github
+      - name: 📊 Enforce Coverage Threshold (85%)
+        working-directory: back
         run: |
           THRESHOLD=85
           COVERAGE_FILE="coverage.json"
@@ -56,17 +89,16 @@ jobs:
             echo "❌ Coverage below threshold (${THRESHOLD}%). Failing."
             exit 1
           fi
-        shell: bash
 
-      - name: 📤 Upload coverage report
+      - name: 📤 Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
-          name: 📁 coverage-report
-          path: webhook_github/coverage.xml
+          name: coverage-report
+          path: back/coverage.xml
 
       - name: 📝 Report Coverage in PR
         if: always()
         uses: orgoro/coverage@v3.2
         with:
-          coverageFile: webhook_github/coverage.xml
+          coverageFile: back/coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}

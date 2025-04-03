@@ -1,24 +1,53 @@
 services:
+  migration:
+    container_name: migration
+    build:
+      context: ../../back
+      dockerfile: Dockerfile.dev
+    command: >
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && alembic upgrade head && python db/seed.py"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../back:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    profiles:
+      - back
+    networks:
+      - app_network
   back:
     container_name: back
     build:
-      context: ./back
+      context: ../../back
       dockerfile: Dockerfile.dev
     ports:
       - "8001:8000"
     environment:
-      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
-      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
       - PYTHONPATH=/app
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
       - PAYPAL_SECRET=${PAYPAL_SECRET}
       - PAYPAL_BASE_URL=${PAYPAL_BASE_URL}
     volumes:
-      - ./back:/app
+      - ../../back:/app
     depends_on:
-      db:
-        condition: service_healthy
-        restart: true
+      migration:
+        condition: service_completed_successfully
+    command: >
+      bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+
     profiles:
       - back
     networks:

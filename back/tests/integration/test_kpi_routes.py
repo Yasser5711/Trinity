@@ -5,10 +5,7 @@ def test_get_kpis(client, admin_auth_header):
 
 
 def test_create_kpi(client, admin_auth_header):
-    payload = {
-        "name": "Revenue Growth",
-        "value": 12.5
-    }
+    payload = {"name": "Revenue Growth", "value": 12.5}
     response = client.post("/kpis", json=payload, headers=admin_auth_header)
     assert response.status_code == 201
     assert response.json()["name"] == "Revenue Growth"
@@ -16,7 +13,6 @@ def test_create_kpi(client, admin_auth_header):
 
 
 def test_get_kpi_by_id(client, admin_auth_header):
-    # First, create a KPI
     payload = {"name": "User Retention", "value": 87.3}
     kpi = client.post("/kpis", json=payload, headers=admin_auth_header).json()
 
@@ -32,7 +28,8 @@ def test_update_kpi(client, admin_auth_header):
 
     update_payload = {"value": 5.5}
     response = client.put(
-        f"/kpis/{kpi['id']}", json=update_payload, headers=admin_auth_header)
+        f"/kpis/{kpi['id']}", json=update_payload, headers=admin_auth_header
+    )
     assert response.status_code == 200
     assert response.json()["message"] == "KPI updated successfully"
 

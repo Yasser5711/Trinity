@@ -1,7 +1,10 @@
 from datetime import datetime
-from typing import List, Optional
-from .schemas import UserBase as UserResponse, Product as ProductResponse
+from typing import List, Optional  # noqa: UP035
+
 from pydantic import BaseModel
+
+from .schemas import Product as ProductResponse
+from .schemas import UserBase as UserResponse
 
 
 class InvoiceItemCreate(BaseModel):
@@ -12,11 +15,11 @@ class InvoiceItemCreate(BaseModel):
 
 class InvoiceCreate(BaseModel):
     user_id: int
-    items: List[InvoiceItemCreate]
+    items: List[InvoiceItemCreate]  # noqa: UP006
 
 
 class InvoiceUpdate(BaseModel):
-    items: List[InvoiceItemCreate]
+    items: List[InvoiceItemCreate]  # noqa: UP006
 
 
 class InvoiceItemResponse(BaseModel):
@@ -28,7 +31,7 @@ class InvoiceItemResponse(BaseModel):
         orm_mode = True
 
 
-class InvoiceItemResponse_2(BaseModel):
+class InvoiceItemResponse_2(BaseModel):  # noqa: N801
     product: ProductResponse
     quantity: int
     unit_price: float
@@ -42,7 +45,7 @@ class InvoiceResponse(BaseModel):
     user_id: int
     total_amount: float
     created_at: Optional[datetime]
-    items: List[InvoiceItemResponse]
+    items: List[InvoiceItemResponse]  # noqa: UP006
     user: Optional[UserResponse]
     payment_status: Optional[str]
 
@@ -50,12 +53,12 @@ class InvoiceResponse(BaseModel):
         orm_mode = True
 
 
-class InvoiceResponse_2(BaseModel):
+class InvoiceResponse_2(BaseModel):  # noqa: N801
     id: int
     user_id: int
     total_amount: float
     created_at: Optional[datetime]
-    items: List[InvoiceItemResponse_2]
+    items: List[InvoiceItemResponse_2]  # noqa: UP006
     user: Optional[UserResponse]
     payment_status: Optional[str]
 

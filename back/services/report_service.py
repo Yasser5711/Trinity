@@ -1,20 +1,21 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
-from db.models.models import User, Role, UserRole, Product, Stock, Invoice
-from fpdf import FPDF
-from fastapi.responses import FileResponse
 import os
+
+from fastapi.responses import FileResponse
+from fpdf import FPDF
+from sqlalchemy import desc, func
+from sqlalchemy.orm import Session
+
+from db.models.models import Invoice, Product, Role, Stock, User, UserRole
 
 
 def generate_report(db: Session) -> FileResponse:
     font_dir = os.path.join(os.path.dirname(__file__), "..", "fonts")
     font_dir = os.path.abspath(font_dir)
-    print(f"Font directory: {font_dir}")
     font_regular = os.path.join(font_dir, "DejaVuSans.ttf")
     font_bold = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
 
     if not os.path.exists(font_regular) or not os.path.exists(font_bold):
-        raise FileNotFoundError(f"Font file not found")
+        raise FileNotFoundError("Font file not found")
 
     pdf = FPDF()
     pdf.add_page()
@@ -39,10 +40,8 @@ def generate_report(db: Session) -> FileResponse:
     # 1. User Analytics
     header("1. User Analytics")
     total_users = db.query(User).count()
-    admin_count = db.query(UserRole).join(
-        Role).filter(Role.name == 'admin').count()
-    customer_count = db.query(UserRole).join(
-        Role).filter(Role.name == 'user').count()
+    admin_count = db.query(UserRole).join(Role).filter(Role.name == "admin").count()
+    customer_count = db.query(UserRole).join(Role).filter(Role.name == "user").count()
     row("Total Users", total_users)
     row("Admins", admin_count)
     row("Customers", customer_count)
@@ -64,8 +63,13 @@ def generate_report(db: Session) -> FileResponse:
     header("Top 10 High Stock Products")
     pdf.cell(80, 8, "Product", border=1)
     pdf.cell(30, 8, "Quantity", border=1, ln=True)
-    high_stock = db.query(Product.name, Stock.quantity).join(Stock)\
-        .order_by(desc(Stock.quantity)).limit(10).all()
+    high_stock = (
+        db.query(Product.name, Stock.quantity)
+        .join(Stock)
+        .order_by(desc(Stock.quantity))
+        .limit(10)
+        .all()
+    )
     for p in high_stock:
         pdf.cell(80, 8, p.name, border=1)
         pdf.cell(30, 8, str(p.quantity), border=1, ln=True)
@@ -76,8 +80,14 @@ def generate_report(db: Session) -> FileResponse:
     header("Top 10 Low Stock Products")
     pdf.cell(80, 8, "Product", border=1)
     pdf.cell(30, 8, "Quantity", border=1, ln=True)
-    low_stock = db.query(Product.name, Stock.quantity).join(Stock)\
-        .filter(Stock.quantity > 0).order_by(Stock.quantity).limit(10).all()
+    low_stock = (
+        db.query(Product.name, Stock.quantity)
+        .join(Stock)
+        .filter(Stock.quantity > 0)
+        .order_by(Stock.quantity)
+        .limit(10)
+        .all()
+    )
     for p in low_stock:
         pdf.cell(80, 8, p.name, border=1)
         pdf.cell(30, 8, str(p.quantity), border=1, ln=True)
@@ -99,9 +109,13 @@ def generate_report(db: Session) -> FileResponse:
     pdf.cell(30, 8, "Invoice ID", border=1)
     pdf.cell(60, 8, "Customer", border=1)
     pdf.cell(40, 8, "Amount", border=1, ln=True)
-    top_invoices = db.query(
-        Invoice.id, User.first_name, User.last_name, Invoice.total_amount
-    ).join(User).order_by(desc(Invoice.total_amount)).limit(10).all()
+    top_invoices = (
+        db.query(Invoice.id, User.first_name, User.last_name, Invoice.total_amount)
+        .join(User)
+        .order_by(desc(Invoice.total_amount))
+        .limit(10)
+        .all()
+    )
 
     for inv in top_invoices:
         pdf.cell(30, 8, str(inv.id), border=1)

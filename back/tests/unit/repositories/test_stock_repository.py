@@ -1,4 +1,3 @@
-
 import repositories.stock_repository as stock_repository
 from db.models.models import Stock
 

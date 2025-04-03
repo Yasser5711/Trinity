@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
+
+from core.helpers.bcrypt import hash_password
 from db.models.models import User
 from db.schemas.users_schemas import UserCreate, UserUpdate
-from core.helpers.bcrypt import hash_password
 from repositories import user_repository
 
 
@@ -19,7 +20,7 @@ def create_user(db: Session, data: UserCreate):
         last_name=data.last_name,
         email=data.email,
         phone=data.phone,
-        password=password
+        password=password,
     )
 
     user = user_repository.create_user(db, user)

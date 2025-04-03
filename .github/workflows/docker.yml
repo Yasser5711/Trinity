@@ -1,29 +1,37 @@
-name: Docker Workflow
+name: 🔍 Docker Config Validation
 
 on:
   pull_request:
     paths:
       - "docker-compose*.yml"
+      - "docker/**"
 
 jobs:
   validate:
-    name: Validate Docker Configuration
+    name: 🧪 Validate Docker Configuration (${{ matrix.compose_file }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compose_file: [docker-compose-dev.yml, docker-compose-prod.yml]
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check Docker and Docker Compose Versions
+      - name: 🧾 Prepare .env
+        run: cp .env.template .env
+
+      - name: 🐳 Check Docker Versions
         run: |
+          set -euo pipefail
           docker --version
           docker compose version
 
-      - name: Validate Docker Compose (Development)
+      - name: 🧾 Validate ${{ matrix.compose_file }}
         run: |
-          cd $GITHUB_WORKSPACE # Ensures we're in the root directory
-          docker compose -f ./docker-compose-dev.yml config
-
-      - name: Validate Docker Compose (Production)
+          set -euo pipefail
+          test -f ${{ matrix.compose_file }} || (echo "File not found: ${{ matrix.compose_file }}" && exit 1)
+          docker compose -f ${{ matrix.compose_file }} config
+      - name: 🧹 Lint Docker Compose YAML
         run: |
-          cd $GITHUB_WORKSPACE # Ensures we're in the root directory
-          docker compose -f ./docker-compose-prod.yml  config
+          pip install yamllint
+          yamllint ${{ matrix.compose_file }}

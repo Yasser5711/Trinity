@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from db.models.models import WishList, WishListItem, Product
+
+from db.models.models import Product, WishList, WishListItem
 
 
 def get_user_wishlist(db: Session, user_id: int):
@@ -19,10 +20,14 @@ def get_product(db: Session, product_id: int):
 
 
 def is_in_wishlist(db: Session, wishlist_id: int, product_id: int):
-    return db.query(WishListItem).filter(
-        WishListItem.wishlist_id == wishlist_id,
-        WishListItem.product_id == product_id
-    ).first()
+    return (
+        db.query(WishListItem)
+        .filter(
+            WishListItem.wishlist_id == wishlist_id,
+            WishListItem.product_id == product_id,
+        )
+        .first()
+    )
 
 
 def add_item(db: Session, item: WishListItem):

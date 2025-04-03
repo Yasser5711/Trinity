@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import Cart, CartStatus
 from db.schemas.cart_schemas import CartCreate, CartUpdate
 from repositories import cart_repository
@@ -8,8 +9,8 @@ def get_all_carts(db: Session):
     return cart_repository.get_all_carts(db)
 
 
-def get_cart_by_id(db: Session, id: int):
-    cart = cart_repository.get_by_id(db, id)
+def get_cart_by_id(db: Session, cart_id: int):
+    cart = cart_repository.get_by_id(db, cart_id)
     if not cart:
         raise ValueError("Cart not found")
     return cart

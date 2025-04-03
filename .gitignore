@@ -50,3 +50,7 @@ app.*.map.json
 /android/app/release
 .env
 .coverage
+.venv
+coverage.xml
+coverage.json
+.vscode/settings.json

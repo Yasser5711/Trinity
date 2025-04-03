@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from db.schemas.address_schemas import AddressCreate, AddressUpdate
+
 from db.models.models import Address
+from db.schemas.address_schemas import AddressCreate, AddressUpdate
 from repositories import address_repository
 
 
@@ -16,7 +17,9 @@ def create_address(db: Session, user_id: int, address_data: AddressCreate) -> Ad
     return address_repository.create(db, user_id, address_data)
 
 
-def update_address(db: Session, address: Address, address_data: AddressUpdate) -> Address:
+def update_address(
+    db: Session, address: Address, address_data: AddressUpdate
+) -> Address:
     return address_repository.update(db, address, address_data)
 
 

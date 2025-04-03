@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from db.models.models import User, Role, Cart, CartItem
+
+from db.models.models import Cart, CartItem, Role, User
 
 
 def get_all_users(db: Session):

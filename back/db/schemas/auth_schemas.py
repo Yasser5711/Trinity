@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional  # noqa: UP035
 
 from pydantic import BaseModel, EmailStr
 
@@ -16,7 +16,7 @@ class User(UserSchema):
     first_name: str
     last_name: str
     email: EmailStr
-    roles: List[Roles]
+    roles: List[Roles]  # noqa: UP006
 
 
 class UserCreate(UserSchema):

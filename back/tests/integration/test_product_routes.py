@@ -29,10 +29,9 @@ def test_create_product(client, admin_auth_header, sample_category):
         "quantity": "1 unit",
         "nutrition": {},
         "ingredients": "water",
-        "allergens": ""
+        "allergens": "",
     }
-    response = client.post("/products", json=payload,
-                           headers=admin_auth_header)
+    response = client.post("/products", json=payload, headers=admin_auth_header)
     assert response.status_code == 201
     assert response.json()["name"] == "Test Product"
 
@@ -40,14 +39,16 @@ def test_create_product(client, admin_auth_header, sample_category):
 def test_update_product(client, admin_auth_header, sample_product):
     payload = {"price": 19.99}
     response = client.put(
-        f"/products/{sample_product.id}", json=payload, headers=admin_auth_header)
+        f"/products/{sample_product.id}", json=payload, headers=admin_auth_header
+    )
     assert response.status_code == 200
     assert response.json()["price"] == 19.99
 
 
 def test_delete_product(client, admin_auth_header, sample_product):
     response = client.delete(
-        f"/products/{sample_product.id}", headers=admin_auth_header)
+        f"/products/{sample_product.id}", headers=admin_auth_header
+    )
     assert response.status_code == 200
     assert response.json()["message"] == "Product deleted successfully"
 
@@ -84,8 +85,7 @@ def test_product_filter_by_name(client, sample_product):
     data = response.json()
 
     assert response.status_code == 200
-    assert any(sample_product.name in prod["name"]
-               for prod in data["products"])
+    assert any(sample_product.name in prod["name"] for prod in data["products"])
 
 
 def test_product_filter_by_brand(client, sample_product):
@@ -93,18 +93,19 @@ def test_product_filter_by_brand(client, sample_product):
     data = response.json()
 
     assert response.status_code == 200
-    assert all(prod["brand"] ==
-               sample_product.brand for prod in data["products"])
+    assert all(prod["brand"] == sample_product.brand for prod in data["products"])
 
 
 def test_product_filter_by_category(client, sample_product):
-    response = client.get(
-        f"/products?category_id={sample_product.category_id}")
+    response = client.get(f"/products?category_id={sample_product.category_id}")
     data = response.json()
 
     assert response.status_code == 200
-    assert all(prod["category"]["id"] ==
-               sample_product.category_id for prod in data["products"] if prod["category"])
+    assert all(
+        prod["category"]["id"] == sample_product.category_id
+        for prod in data["products"]
+        if prod["category"]
+    )
 
 
 def test_product_filter_by_price_range(client):

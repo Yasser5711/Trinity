@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from db.models.models import User
-from db.schemas.auth_schemas import UserCreate, UserLogin, UserUpdateInfo
+
 from core.helpers.bcrypt import hash_password, verify_password
 from core.helpers.jwt import create_access_token, verify_token
-from db.schemas.auth_schemas import ResetPass
+from db.models.models import User
+from db.schemas.auth_schemas import ResetPass, UserCreate, UserLogin, UserUpdateInfo
 from repositories import auth_repository
 
 
@@ -15,6 +15,7 @@ def register_user(db: Session, user_data: UserCreate):
     role = auth_repository.get_role_by_name(db, "user")
     if not role:
         from db.models.models import Role
+
         role = Role(name="user")
         db.add(role)
         db.commit()
@@ -25,7 +26,7 @@ def register_user(db: Session, user_data: UserCreate):
         last_name=user_data.last_name,
         email=user_data.email,
         password=hash_password(user_data.password),
-        roles=[role]
+        roles=[role],
     )
     return auth_repository.create_user(db, new_user)
 

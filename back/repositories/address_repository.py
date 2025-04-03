@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import Address
 from db.schemas.address_schemas import AddressCreate, AddressUpdate
 
@@ -8,7 +9,11 @@ def get_user_addresses(db: Session, user_id: int):
 
 
 def get_by_id(db: Session, address_id: int, user_id: int):
-    return db.query(Address).filter(Address.id == address_id, Address.user_id == user_id).first()
+    return (
+        db.query(Address)
+        .filter(Address.id == address_id, Address.user_id == user_id)
+        .first()
+    )
 
 
 def create(db: Session, user_id: int, address_data: AddressCreate):

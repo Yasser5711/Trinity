@@ -1,0 +1,10 @@
+include:
+  - path: "docker/db/compose-prod.yml"
+  - path: "docker/back/compose-prod.yml"
+  - path: "docker/tools/compose-prod.yml"
+
+volumes:
+  db_data:
+
+networks:
+  app_network:

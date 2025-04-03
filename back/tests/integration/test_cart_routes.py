@@ -1,4 +1,3 @@
-import pytest
 from db.schemas.cart_schemas import CartStatusEnum
 
 
@@ -31,8 +30,7 @@ def test_create_cart_duplicate_route(client, sample_cart, admin_auth_header):
 
 
 def test_get_cart_by_id_route(client, sample_cart, admin_auth_header):
-    response = client.get(
-        f"/carts/{sample_cart.id}", headers=admin_auth_header)
+    response = client.get(f"/carts/{sample_cart.id}", headers=admin_auth_header)
     assert response.status_code == 200
 
     data = response.json()
@@ -50,7 +48,8 @@ def test_get_cart_by_id_not_found_route(client, admin_auth_header):
 def test_update_cart_success_route(client, sample_cart, admin_auth_header):
     payload = {"status": "completed"}  # Valid string per CartStatusEnum
     response = client.put(
-        f"/carts/{sample_cart.id}", json=payload, headers=admin_auth_header)
+        f"/carts/{sample_cart.id}", json=payload, headers=admin_auth_header
+    )
 
     assert response.status_code == 200
     assert response.json()["message"] == "Cart updated successfully"
@@ -59,15 +58,15 @@ def test_update_cart_success_route(client, sample_cart, admin_auth_header):
 def test_update_cart_invalid_status_route(client, sample_cart, admin_auth_header):
     payload = {"status": "INVALID_STATUS"}  # Not part of CartStatusEnum
     response = client.put(
-        f"/carts/{sample_cart.id}", json=payload, headers=admin_auth_header)
+        f"/carts/{sample_cart.id}", json=payload, headers=admin_auth_header
+    )
 
     assert response.status_code == 422  # Pydantic catches this
     assert response.json()["detail"][0]["msg"].startswith("Input should be")
 
 
 def test_delete_cart_success_route(client, sample_cart, admin_auth_header):
-    response = client.delete(
-        f"/carts/{sample_cart.id}", headers=admin_auth_header)
+    response = client.delete(f"/carts/{sample_cart.id}", headers=admin_auth_header)
     assert response.status_code == 200
     assert response.json()["message"] == "Cart deleted successfully"
 

@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import CartItem
 from db.schemas.cart_items_schemas import CartItemCreate, CartItemUpdate
 from repositories import cart_item_repository
@@ -21,9 +22,7 @@ def create_cart_item(db: Session, data: CartItemCreate):
         raise ValueError("Product not found")
 
     item = CartItem(
-        cart_id=data.cart_id,
-        product_id=data.product_id,
-        quantity=data.quantity
+        cart_id=data.cart_id, product_id=data.product_id, quantity=data.quantity
     )
     return cart_item_repository.create(db, item)
 

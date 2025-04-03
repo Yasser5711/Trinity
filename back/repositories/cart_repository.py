@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session
-from db.models.models import Cart, CartItem
+
+from db.models.models import Cart
 
 
 def get_all_carts(db: Session):
     return db.query(Cart).all()
 
 
-def get_by_id(db: Session, id: int):
-    return db.query(Cart).filter(Cart.id == id).first()
+def get_by_id(db: Session, cart_id: int):
+    return db.query(Cart).filter(Cart.id == cart_id).first()
 
 
 def get_by_user_id(db: Session, user_id: int):

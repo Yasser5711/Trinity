@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import extract, func
+from sqlalchemy.orm import Session
+
 from db.models.models import Invoice, InvoiceItem
 
 
@@ -7,8 +8,8 @@ def get_all(db: Session):
     return db.query(Invoice).all()
 
 
-def get_by_id(db: Session, id: int):
-    return db.query(Invoice).filter(Invoice.id == id).first()
+def get_by_id(db: Session, invoice_id: int):
+    return db.query(Invoice).filter(Invoice.id == invoice_id).first()
 
 
 def create_invoice(db: Session, invoice: Invoice):
@@ -35,20 +36,23 @@ def delete_invoice(db: Session, invoice: Invoice):
 
 
 def get_yearly_sales(db: Session, year: int):
-    return db.query(
-        extract('month', Invoice.created_at).label('month'),
-        func.coalesce(func.sum(Invoice.total_amount), 0).label('total')
-    ).filter(
-        extract('year', Invoice.created_at) == year
-    ).group_by(
-        extract('month', Invoice.created_at)
-    ).all()
+    return (
+        db.query(
+            extract("month", Invoice.created_at).label("month"),
+            func.coalesce(func.sum(Invoice.total_amount), 0).label("total"),
+        )
+        .filter(extract("year", Invoice.created_at) == year)
+        .group_by(extract("month", Invoice.created_at))
+        .all()
+    )
 
 
 def get_monthly_sales(db: Session, year: int, month: int):
-    return db.query(
-        func.coalesce(func.sum(Invoice.total_amount), 0)
-    ).filter(
-        extract('year', Invoice.created_at) == year,
-        extract('month', Invoice.created_at) == month
-    ).scalar()
+    return (
+        db.query(func.coalesce(func.sum(Invoice.total_amount), 0))
+        .filter(
+            extract("year", Invoice.created_at) == year,
+            extract("month", Invoice.created_at) == month,
+        )
+        .scalar()
+    )

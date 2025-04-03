@@ -3,27 +3,31 @@ from tests.factories.product_factory import ProductFactory
 
 
 def test_create_invoice_item_repo(db_session):
-    from db.models.models import InvoiceItem, Invoice
+    from db.models.models import Invoice, InvoiceItem
+
     product = ProductFactory()
     invoice = Invoice(user_id=1, total_amount=0)
     db_session.add(invoice)
     db_session.commit()
 
-    item = InvoiceItem(invoice_id=invoice.id,
-                       product_id=product.id, quantity=1, unit_price=10)
+    item = InvoiceItem(
+        invoice_id=invoice.id, product_id=product.id, quantity=1, unit_price=10
+    )
     result = invoice_item_repository.create(db_session, item)
     assert result.id
 
 
 def test_get_invoice_item_by_id_repo(db_session):
-    from db.models.models import InvoiceItem, Invoice, Product
+    from db.models.models import Invoice, InvoiceItem
+
     product = ProductFactory()
     invoice = Invoice(user_id=1, total_amount=0)
     db_session.add(invoice)
     db_session.commit()
 
-    item = InvoiceItem(invoice_id=invoice.id,
-                       product_id=product.id, quantity=2, unit_price=20)
+    item = InvoiceItem(
+        invoice_id=invoice.id, product_id=product.id, quantity=2, unit_price=20
+    )
     db_session.add(item)
     db_session.commit()
 
@@ -32,14 +36,16 @@ def test_get_invoice_item_by_id_repo(db_session):
 
 
 def test_update_invoice_item_repo(db_session):
-    from db.models.models import InvoiceItem, Invoice, Product
+    from db.models.models import Invoice, InvoiceItem
+
     product = ProductFactory()
     invoice = Invoice(user_id=1, total_amount=0)
     db_session.add(invoice)
     db_session.commit()
 
-    item = InvoiceItem(invoice_id=invoice.id,
-                       product_id=product.id, quantity=1, unit_price=5)
+    item = InvoiceItem(
+        invoice_id=invoice.id, product_id=product.id, quantity=1, unit_price=5
+    )
     db_session.add(item)
     db_session.commit()
 
@@ -49,14 +55,16 @@ def test_update_invoice_item_repo(db_session):
 
 
 def test_delete_invoice_item_repo(db_session):
-    from db.models.models import InvoiceItem, Invoice, Product
+    from db.models.models import Invoice, InvoiceItem
+
     product = ProductFactory()
     invoice = Invoice(user_id=1, total_amount=0)
     db_session.add(invoice)
     db_session.commit()
 
-    item = InvoiceItem(invoice_id=invoice.id,
-                       product_id=product.id, quantity=1, unit_price=5)
+    item = InvoiceItem(
+        invoice_id=invoice.id, product_id=product.id, quantity=1, unit_price=5
+    )
     db_session.add(item)
     db_session.commit()
 

@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
-from db.models.models import Product
 from sqlalchemy import func
+from sqlalchemy.orm import Session
+
+from db.models.models import Product
 
 
 def get_products_query(db: Session):

@@ -1,4 +1,5 @@
 import pytest
+
 import services.user_service as user_service
 from db.schemas.users_schemas import UserCreate, UserUpdate
 
@@ -9,8 +10,8 @@ def test_create_user(db_session):
         last_name="Doe",
         email="alice@example.com",
         phone="1234567890",
-        password="secret",
-        role_id=None
+        password="secret",  # noqa: S106
+        role_id=None,
     )
     user = user_service.create_user(db_session, data)
     assert user.id
@@ -24,9 +25,7 @@ def test_get_user_by_id(db_session, sample_user):
 
 def test_update_user(db_session, sample_user):
     updated = user_service.update_user(
-        db_session,
-        sample_user.id,
-        UserUpdate(first_name="Updated")
+        db_session, sample_user.id, UserUpdate(first_name="Updated")
     )
     assert updated.first_name == "Updated"
 

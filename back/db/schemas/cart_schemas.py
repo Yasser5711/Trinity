@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional  # noqa: UP035
 
 from .schemas import BaseSchema
 
@@ -34,8 +34,8 @@ class CartResponse(BaseSchema):
 
 
 class CartDetailResponse(CartResponse):
-    items: List[CartItemResponse]
+    items: List[CartItemResponse]  # noqa: UP006
 
 
 class CartStatusResponse(BaseSchema):
-    statuses: List[str]
+    statuses: List[str]  # noqa: UP006

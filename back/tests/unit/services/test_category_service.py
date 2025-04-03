@@ -1,4 +1,5 @@
 import pytest
+
 import services.category_service as category_service
 from db.schemas.category_schemas import CategoryCreate, CategoryUpdate
 
@@ -10,6 +11,7 @@ def test_get_categories(db_session, sample_category):
 
 def test_get_categories_top_limit(db_session):
     from tests.factories.category_factory import CategoryFactory
+
     for _ in range(5):
         CategoryFactory()
 
@@ -34,8 +36,7 @@ def test_create_category_duplicate(db_session, sample_category):
 
 def test_update_category_success(db_session, sample_category):
     data = CategoryUpdate(name="Updated Category")
-    updated = category_service.update_category(
-        db_session, sample_category.id, data)
+    updated = category_service.update_category(db_session, sample_category.id, data)
     assert updated.name == "Updated Category"
 
 

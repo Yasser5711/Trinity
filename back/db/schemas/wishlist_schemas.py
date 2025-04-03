@@ -1,5 +1,7 @@
+from typing import List  # noqa: UP035
+
 from pydantic import BaseModel
-from typing import List
+
 from .product_schemas import ProductResponse
 
 
@@ -22,7 +24,7 @@ class WishlistCreate(BaseModel):
 class WishlistResponse(BaseModel):
     id: int
     # user_id: int
-    items: List[WishlistItemResponse]
+    items: List[WishlistItemResponse]  # noqa: UP006
 
     class Config:
         orm_mode = True

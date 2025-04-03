@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import KPI
 from db.schemas.kpis_schemas import KPICreate, KPIUpdate
 from repositories import kpi_repository

@@ -1,6 +1,7 @@
 import factory
-from db.models.models import User
+
 from core.helpers import hash_password
+from db.models.models import User
 
 
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):

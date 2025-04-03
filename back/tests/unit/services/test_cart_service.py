@@ -1,8 +1,9 @@
-from db.schemas.cart_schemas import CartCreate, CartUpdate
-from db.models.models import CartStatus
-import services.cart_service as cart_service
 import pytest
 from pydantic import ValidationError
+
+import services.cart_service as cart_service
+from db.models.models import CartStatus
+from db.schemas.cart_schemas import CartCreate, CartUpdate
 
 
 def test_create_cart_success(db_session, sample_user):
@@ -27,7 +28,7 @@ def test_get_cart_by_id_success(db_session, sample_cart):
 
 def test_get_cart_by_id_not_found(db_session):
     with pytest.raises(ValueError, match="Cart not found"):
-        cart_service.get_cart_by_id(db_session, id=9999)
+        cart_service.get_cart_by_id(db_session, cart_id=9999)
 
 
 def test_update_cart_status_success(db_session, sample_cart):

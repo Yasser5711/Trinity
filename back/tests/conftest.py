@@ -3,10 +3,19 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from db.session import get_db
+
 from db.models.models import Base, Role
+from db.session import get_db
 from main import app
-from tests.factories import AddressFactory, CartFactory, UserFactory, CartItemFactory, CategoryFactory, ProductFactory, StockFactory
+from tests.factories import (
+    AddressFactory,
+    CartFactory,
+    CartItemFactory,
+    CategoryFactory,
+    ProductFactory,
+    StockFactory,
+    UserFactory,
+)
 
 # import sys
 # import os
@@ -15,8 +24,9 @@ from tests.factories import AddressFactory, CartFactory, UserFactory, CartItemFa
 
 DATABASE_URL = "sqlite://"
 
-engine = create_engine(DATABASE_URL, connect_args={
-                       "check_same_thread": False}, poolclass=StaticPool)
+engine = create_engine(
+    DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
+)
 TestingSessionLocal = sessionmaker(bind=engine)
 
 
@@ -56,7 +66,7 @@ def db_session():
 
 
 @pytest.fixture
-def client(db_session):
+def client(db_session):  # noqa: F811
     def override_get_db():
         yield db_session
 
@@ -91,6 +101,7 @@ def sample_cart(sample_user):
 @pytest.fixture
 def admin_user(db_session):
     from db.models.models import Role
+
     user = UserFactory()
     role = Role(name="admin")
     user.roles.append(role)
@@ -111,6 +122,7 @@ def admin_auth_header(client, admin_user):
 @pytest.fixture
 def sample_cart_item(db_session, sample_product, sample_cart):
     from db.models.models import Stock
+
     stock = Stock(product_id=sample_product.id, quantity=10)
     db_session.add(stock)
     db_session.commit()

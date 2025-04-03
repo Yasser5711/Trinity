@@ -1,4 +1,5 @@
 import factory
+
 from db.models.models import CartItem
 from tests.factories.cart_factory import CartFactory
 from tests.factories.product_factory import ProductFactory

@@ -1,6 +1,7 @@
 import pytest
-from db.models.models import Role
+
 import services.role_service as role_service
+from db.models.models import Role
 
 
 def test_list_roles(db_session, sample_role):
@@ -20,8 +21,7 @@ def test_create_duplicate_role_raises(db_session, sample_role):
 
 
 def test_update_role(db_session, sample_role):
-    updated = role_service.update_role(
-        db_session, sample_role.id, "updated-role")
+    updated = role_service.update_role(db_session, sample_role.id, "updated-role")
     assert updated.name == "updated-role"
 
 
@@ -32,8 +32,7 @@ def test_update_nonexistent_role_raises(db_session):
 
 def test_delete_role(db_session, sample_role):
     role_service.delete_role(db_session, sample_role.id)
-    assert db_session.query(Role).filter(
-        Role.id == sample_role.id).first() is None
+    assert db_session.query(Role).filter(Role.id == sample_role.id).first() is None
 
 
 def test_delete_nonexistent_role_raises(db_session):

@@ -1,11 +1,10 @@
 from decimal import Decimal
-from typing import Optional, List
+from typing import List, Optional  # noqa: UP035
 
-from pydantic import BaseModel
-
-from .schemas import Product as ProductBase, BaseSchema
-from .stock_schemas import StockResponse as StockBase
 from .category_schemas import CategoryResponse
+from .schemas import BaseSchema
+from .schemas import Product as ProductBase
+from .stock_schemas import StockResponse as StockBase
 
 
 class ProductCreate(ProductBase):
@@ -14,7 +13,7 @@ class ProductCreate(ProductBase):
     description: str
     category_id: int
     brand: str
-    barCode: str
+    barCode: str  # noqa: N815
 
 
 class ProductUpdate(ProductBase):
@@ -29,7 +28,7 @@ class ProductResponse(ProductBase):
 
 
 class ProductPaginated(BaseSchema):
-    products: List[ProductResponse]
+    products: List[ProductResponse]  # noqa: UP006
     total: int
     total_pages: int
     page: int

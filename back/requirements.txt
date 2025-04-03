@@ -22,3 +22,7 @@ fpdf2
 pytest-mock
 factory_boy
 PyPDF2
+ruff
+mypy
+pydantic
+loguru

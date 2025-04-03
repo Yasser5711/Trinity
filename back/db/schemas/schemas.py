@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional  # noqa: UP035
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, constr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class BaseSchema(BaseModel):
-
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -20,22 +19,22 @@ class UserBase(BaseSchema):
     last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
-    roles: List[RoleBase] = []
+    roles: List[RoleBase] = []  # noqa: UP006
 
 
 class Token(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    token_type: str = "bearer"  # noqa: S105
 
 
 class Users(BaseModel):
-    users: List[UserBase]
+    users: List[UserBase]  # noqa: UP006
 
 
 class Product(BaseSchema):
     id: Optional[int] = None
-    nutriScore: Optional[str] = Field(None, max_length=50)
-    barCode: Optional[str] = Field(None, max_length=255)
+    nutriScore: Optional[str] = Field(None, max_length=50)  # noqa: N815
+    barCode: Optional[str] = Field(None, max_length=255)  # noqa: N815
     updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     picture: Optional[str] = None
     price: Optional[float] = None

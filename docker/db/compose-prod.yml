@@ -2,16 +2,13 @@ services:
   db:
     image: postgres:13
     container_name: db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME:-dev_db}
+      POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "8002:5432"
-    profiles:
-      - back
+      - db_data:/var/lib/postgresql/data
     networks:
       - app_network
     healthcheck:

@@ -1,4 +1,5 @@
-name: Lint Commit Messages
+name: 🧾 Commit Message Lint
+
 on: [pull_request]
 
 permissions:
@@ -7,7 +8,11 @@ permissions:
 
 jobs:
   commitlint:
+    name: ✅ Lint Commit Messages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: wagoid/commitlint-github-action@v6
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧾 Run Commitlint
+        uses: wagoid/commitlint-github-action@v6

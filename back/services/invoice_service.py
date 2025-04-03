@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from sqlalchemy.orm import Session
+
 from db.models.models import Invoice, InvoiceItem
 from db.schemas.invoices_schemas import InvoiceCreate, InvoiceUpdate
 from repositories import invoice_repository
@@ -26,7 +28,7 @@ def create_invoice(db: Session, data: InvoiceCreate):
             invoice_id=invoice.id,
             product_id=item.product_id,
             quantity=item.quantity,
-            unit_price=item.price
+            unit_price=item.price,
         )
         total += item.quantity * item.price
         invoice_repository.add_invoice_item(db, invoice_item)
@@ -49,7 +51,7 @@ def update_invoice(db: Session, invoice_id: int, data: InvoiceUpdate):
             invoice_id=invoice.id,
             product_id=item.product_id,
             quantity=item.quantity,
-            unit_price=item.price
+            unit_price=item.price,
         )
         invoice.total_amount += item.quantity * item.price
         invoice_repository.add_invoice_item(db, invoice_item)
@@ -94,5 +96,5 @@ def get_monthly_sales(db: Session, year: int, month: int):
     return {
         "year": year,
         "month": datetime(1900, month, 1).strftime("%B"),
-        "total_sales": total
+        "total_sales": total,
     }

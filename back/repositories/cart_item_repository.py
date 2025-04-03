@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import CartItem, Product
 
 
@@ -6,8 +7,8 @@ def get_all(db: Session):
     return db.query(CartItem).all()
 
 
-def get_by_id(db: Session, id: int):
-    return db.query(CartItem).filter(CartItem.id == id).first()
+def get_by_id(db: Session, cart_item_id: int):
+    return db.query(CartItem).filter(CartItem.id == cart_item_id).first()
 
 
 def create(db: Session, item: CartItem):
@@ -28,5 +29,5 @@ def delete(db: Session, item: CartItem):
     db.commit()
 
 
-def get_product_by_id(db: Session, id: int):
-    return db.query(Product).filter(Product.id == id).first()
+def get_product_by_id(db: Session, cart_item_id: int):
+    return db.query(Product).filter(Product.id == cart_item_id).first()

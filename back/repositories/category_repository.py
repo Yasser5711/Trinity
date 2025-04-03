@@ -1,14 +1,13 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
+
 from db.models.models import Category, Product
 
 
 def get_all_categories(db: Session):
     query = (
         db.query(
-            Category.id,
-            Category.name,
-            func.count(Product.id).label("product_count")
+            Category.id, Category.name, func.count(Product.id).label("product_count")
         )
         .outerjoin(Product)
         .group_by(Category.id)
@@ -21,8 +20,8 @@ def get_top_categories(db: Session, top: int):
     return get_all_categories(db).limit(top)
 
 
-def get_by_id(db: Session, id: int):
-    return db.query(Category).filter(Category.id == id).first()
+def get_by_id(db: Session, category_id: int):
+    return db.query(Category).filter(Category.id == category_id).first()
 
 
 def get_by_name(db: Session, name: str):

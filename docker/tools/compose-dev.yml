@@ -2,24 +2,23 @@ services:
   pgadmin:
     build:
       context: ./pgadmin
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_SERVER_JSON_FILE: "/pgadmin4/servers.json"
-
-    ports:
-      - "8003:80"
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      DATABASE_USER: ${DATABASE_USER:-dev_user}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-dev_pass}
+      DATABASE_NAME: ${DATABASE_NAME:-dev_db}
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8003:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     profiles:
       - back
     networks:
       - app_network
     restart: unless-stopped
-
-volumes:
-  pgadmin_data:

@@ -1,7 +1,7 @@
 import pytest
-from db.schemas.stock_schemas import StockCreate, StockUpdate
+
 import services.stock_service as stock_service
-from db.models.models import Stock
+from db.schemas.stock_schemas import StockCreate, StockUpdate
 
 
 def test_get_all_stocks(db_session, sample_stock):

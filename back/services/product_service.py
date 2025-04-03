@@ -1,10 +1,11 @@
 import math
 import random
+
 from sqlalchemy.orm import Session
-from db.models.models import Product
+
+from db.models.models import Category, Product
 from db.schemas.product_schemas import ProductCreate, ProductUpdate
 from repositories import product_repository
-from db.models.models import Category
 
 
 def filter_products(query, filters: dict):
@@ -36,7 +37,7 @@ def get_products(db: Session, filters: dict, limit: int, page: int):
             "page": page,
             "total_pages": total_pages,
             "products": [],
-            "message": f"Page {page} is out of range. Only {total_pages} pages available."
+            "message": f"Page {page} is out of range. Only {total_pages} pages available.",
         }
 
     products = product_repository.get_paginated(query, offset, limit)
@@ -72,8 +73,9 @@ def update_product(db: Session, product_id: int, data: ProductUpdate):
     if not product:
         raise ValueError("Product not found")
     if data.category_id:
-        category_exists = db.query(Category).filter(
-            Category.id == data.category_id).first()
+        category_exists = (
+            db.query(Category).filter(Category.id == data.category_id).first()
+        )
         if not category_exists:
             raise ValueError("Category not found")
 
@@ -98,5 +100,5 @@ def get_top_random_products(db: Session, top: int):
         return []
 
     top = min(top, total)
-    offset = random.randint(0, max(0, total - top))
+    offset = random.randint(0, max(0, total - top))  # noqa: S311
     return product_repository.get_random_products(db, offset, top)

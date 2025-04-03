@@ -1,25 +1,52 @@
 services:
+  migration:
+    container_name: migration
+    build:
+      context: ../../back
+      dockerfile: Dockerfile.prod
+    command: >
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- &&
+               alembic upgrade head &&
+               python db/seed.py"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../back:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - app_network
+
   back:
     container_name: back
     build:
-      context: ./back
+      context: ../../back
       dockerfile: Dockerfile.prod
     ports:
       - "8001:8000"
     environment:
-      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
-      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/mydatabase
-      - PYTHONPATH=/app
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
       - PAYPAL_SECRET=${PAYPAL_SECRET}
       - PAYPAL_BASE_URL=${PAYPAL_BASE_URL}
+      - PYTHONPATH=/app
     volumes:
-      - ./back:/app
+      - ../../back:/app
     depends_on:
-      db:
-        condition: service_healthy
-        restart: true
-    profiles:
-      - back
+      migration:
+        condition: service_completed_successfully
+    command: >
+      uvicorn main:app --host 0.0.0.0 --port 8000
+    restart: always
     networks:
       - app_network

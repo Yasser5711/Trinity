@@ -1,6 +1,3 @@
-import pytest
-from unittest.mock import patch
-from db.models.models import Role
 from core.helpers.jwt import create_access_token
 
 
@@ -9,7 +6,7 @@ def test_register_user(client, db_session):
         "first_name": "Test",
         "last_name": "User",
         "email": "newuser@example.com",
-        "password": "securepass123"
+        "password": "securepass123",
     }
     response = client.post("/auth/register", json=payload)
     assert response.status_code == 201
@@ -17,10 +14,9 @@ def test_register_user(client, db_session):
 
 
 def test_login_user(client, sample_user):
-    response = client.post("/auth/login", json={
-        "email": sample_user.email,
-        "password": "password123"
-    })
+    response = client.post(
+        "/auth/login", json={"email": sample_user.email, "password": "password123"}
+    )
     assert response.status_code == 200
     assert "access_token" in response.json()
 
@@ -32,8 +28,9 @@ def test_me(client, auth_header):
 
 
 def test_update_me(client, auth_header):
-    response = client.put("/auth/me", headers=auth_header,
-                          json={"first_name": "Changed"})
+    response = client.put(
+        "/auth/me", headers=auth_header, json={"first_name": "Changed"}
+    )
     assert response.status_code == 200
     assert response.json()["first_name"] == "Changed"
 
@@ -50,19 +47,21 @@ def test_logout(client, auth_header):
 
 
 def test_forgot_password(client, sample_user):
-    response = client.post("/auth/forgot-password",
-                           json={"email": sample_user.email})
+    response = client.post("/auth/forgot-password", json={"email": sample_user.email})
     assert response.status_code == 200
     assert "token" in response.json()
 
 
 def test_reset_password(client, db_session, sample_user):
     token = create_access_token({"sub": str(sample_user.id)})
-    response = client.post("/auth/reset-password", json={
-        "token": token,
-        "password": "newpass123",
-        "confirm_password": "newpass123"
-    })
+    response = client.post(
+        "/auth/reset-password",
+        json={
+            "token": token,
+            "password": "newpass123",
+            "confirm_password": "newpass123",
+        },
+    )
     assert response.status_code == 200
 
 
@@ -72,9 +71,6 @@ def test_add_remove_role(client, admin_auth_header, sample_user, sample_role):
     assert r_add.status_code == 200
 
     r_remove = client.request(
-        method="DELETE",
-        url="/auth/roles",
-        headers=admin_auth_header,
-        json=data
+        method="DELETE", url="/auth/roles", headers=admin_auth_header, json=data
     )
     assert r_remove.status_code == 200

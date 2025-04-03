@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from db.schemas.roles_schemas import RoleCreate, RoleUpdate, RoleResponse
-from core.helpers import has_role, login_required, get_db
+from core.helpers import get_db, has_role, login_required
 from db.models.models import User
+from db.schemas.roles_schemas import RoleCreate, RoleResponse, RoleUpdate
 from services import role_service
 
 router = APIRouter()
@@ -27,7 +27,7 @@ def create_role(
         created = role_service.create_role(db, role.name)
         return {"message": "Role created successfully", "role": created}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.put("/roles", tags=["roles"])
@@ -40,17 +40,17 @@ def update_role(
         updated = role_service.update_role(db, role.id, role.name)
         return {"message": "Role updated successfully", "role": updated}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
-@router.delete("/roles/{id}", tags=["roles"])
+@router.delete("/roles/{role_id}", tags=["roles"])
 def delete_role(
-    id: int,
+    role_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(has_role("admin")),
 ):
     try:
-        role_service.delete_role(db, id)
+        role_service.delete_role(db, role_id)
         return {"message": "Role deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e

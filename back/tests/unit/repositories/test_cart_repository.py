@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from db.models.models import Cart, CartStatus
+
 import repositories.cart_repository as cart_repository
+from db.models.models import Cart, CartStatus
 
 
 def test_create_cart(db_session: Session, sample_user):

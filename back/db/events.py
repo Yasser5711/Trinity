@@ -5,8 +5,7 @@ from db.models import models
 
 
 def assign_default_role_after_insert(mapper, connection, target):
-    result = connection.execute(
-        select(models.Role).where(models.Role.name == "user"))
+    result = connection.execute(select(models.Role).where(models.Role.name == "user"))
     user_role = result.fetchone()
 
     if not user_role:
@@ -18,4 +17,4 @@ def assign_default_role_after_insert(mapper, connection, target):
     )
 
 
-event.listen(models.User, 'after_insert', assign_default_role_after_insert)
+event.listen(models.User, "after_insert", assign_default_role_after_insert)

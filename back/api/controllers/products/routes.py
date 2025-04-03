@@ -1,8 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+
 from core.helpers import has_role
 from db.models.models import User
-from db.schemas.product_schemas import ProductCreate, ProductUpdate, ProductResponse, ProductPaginated
+from db.schemas.product_schemas import (
+    ProductCreate,
+    ProductPaginated,
+    ProductResponse,
+    ProductUpdate,
+)
 from db.session import get_db
 from services import product_service
 
@@ -25,20 +31,22 @@ def get_products(
         "brand": brand,
         "category_id": category_id,
         "price_min": price_min,
-        "price_max": price_max
+        "price_max": price_max,
     }
     return product_service.get_products(db, filters, limit, page)
 
 
-@router.get("/products/{id}", response_model=ProductResponse, tags=["products"])
-def get_product_by_id(id: int, db: Session = Depends(get_db)):
-    product = product_service.get_product_by_id(db, id)
+@router.get("/products/{product_id}", response_model=ProductResponse, tags=["products"])
+def get_product_by_id(product_id: int, db: Session = Depends(get_db)):
+    product = product_service.get_product_by_id(db, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
 
-@router.get("/products/barcode/{code}", response_model=ProductResponse, tags=["products"])
+@router.get(
+    "/products/barcode/{code}", response_model=ProductResponse, tags=["products"]
+)
 def get_product_by_code(code: str, db: Session = Depends(get_db)):
     product = product_service.get_product_by_barcode(db, code)
     if not product:
@@ -46,7 +54,9 @@ def get_product_by_code(code: str, db: Session = Depends(get_db)):
     return product
 
 
-@router.post("/products", response_model=ProductResponse, status_code=201, tags=["products"])
+@router.post(
+    "/products", response_model=ProductResponse, status_code=201, tags=["products"]
+)
 def create_product(
     product: ProductCreate,
     db: Session = Depends(get_db),
@@ -55,33 +65,33 @@ def create_product(
     try:
         return product_service.create_product(db, product)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
-@router.put("/products/{id}", response_model=ProductResponse, tags=["products"])
+@router.put("/products/{product_id}", response_model=ProductResponse, tags=["products"])
 def update_product(
-    id: int,
+    product_id: int,
     product: ProductUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(has_role("admin")),
 ):
     try:
-        return product_service.update_product(db, id, product)
+        return product_service.update_product(db, product_id, product)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
-@router.delete("/products/{id}", tags=["products"])
+@router.delete("/products/{product_id}", tags=["products"])
 def delete_product(
-    id: int,
+    product_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(has_role("admin")),
 ):
     try:
-        product_service.delete_product(db, id)
+        product_service.delete_product(db, product_id)
         return {"message": "Product deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/top-products", tags=["products"])

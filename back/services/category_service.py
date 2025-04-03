@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import Category
 from db.schemas.category_schemas import CategoryCreate, CategoryUpdate
 from repositories import category_repository
@@ -9,11 +10,7 @@ def get_categories(db: Session, top: int = None):
     if top:
         categories = categories[:top]
     return [
-        {
-            "id": c.id,
-            "name": c.name,
-            "product_count": c.product_count
-        }
+        {"id": c.id, "name": c.name, "product_count": c.product_count}
         for c in categories
     ]
 

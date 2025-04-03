@@ -1,37 +1,22 @@
-# Première étape : Construction
-FROM python:3.11 AS builder
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
-
-# Deuxième étape : Image de production finale
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copier les dépendances installées depuis l'étape précédente
-COPY --from=builder /root/.local /root/.local
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libpq-dev curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Ajouter les exécutables installés au PATH
-ENV PATH=/root/.local/bin:$PATH
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copier le code source
-COPY . /app
-COPY core /app
-# Exposer le port de l'application FastAPI
+COPY . .
+
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 EXPOSE 8000
 
-COPY wait-for-it.sh /
-# Commande pour démarrer l'application avec Gunicorn et Uvicorn
-# CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "main:app"]
-CMD ["bash", "-c", "/wait-for-it.sh db-prod:5432 -- \
-    alembic history | grep 'Initial migration' && \
-    echo 'Migration already exists, applying migrations only...' && \
-    alembic upgrade head || \
-    (echo 'Creating initial migration and applying it...' && \
-    alembic revision --autogenerate -m 'Initial migration' && \
-    alembic upgrade head) && \
-    python3 db/seed.py  && \
-    gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 main:app"]
+CMD ["bash"]

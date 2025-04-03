@@ -1,10 +1,9 @@
-from unittest.mock import patch
-import services.report_service as report_service
 import os
 import tempfile
-from PyPDF2 import PdfReader
-import tempfile
+from unittest.mock import patch
+
 import pytest
+from PyPDF2 import PdfReader
 
 
 @patch("services.report_service.os.path.exists", return_value=True)

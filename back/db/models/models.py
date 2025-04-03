@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, Strin
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import declarative_base, relationship
 
-from ..session import SessionLocal, engine
+from ..session import SessionLocal, engine  # noqa: F401
 
 Base = declarative_base()
 
@@ -32,15 +32,13 @@ class User(BaseModel):
     password = Column(Text, nullable=False)
 
     # Relationships
-    roles = relationship("Role", secondary="user_roles",
-                         back_populates="users")
+    roles = relationship("Role", secondary="user_roles", back_populates="users")
     address = relationship("Address", uselist=False, back_populates="user")
     invoices = relationship("Invoice", back_populates="user")
     carts = relationship("Cart", back_populates="user")
     wishlist = relationship("WishList", back_populates="user", uselist=False)
 
     def has_role(self, role_name):
-
         role_name = role_name.lower()
         return any(role.name == role_name for role in self.roles)
 
@@ -51,8 +49,7 @@ class Role(BaseModel):
     name = Column(String(255), nullable=False)
 
     # Relationships
-    users = relationship("User", secondary="user_roles",
-                         back_populates="roles")
+    users = relationship("User", secondary="user_roles", back_populates="roles")
 
 
 class UserRole(Base):
@@ -78,27 +75,45 @@ class Product(BaseModel):
     __tablename__ = "products"
 
     name = Column(String(255), nullable=False)
-    nutriScore = Column(String(50), nullable=False)
-    barCode = Column(String(255), nullable=False)
+    nutriScore = Column(String(50), nullable=False)  # noqa: N815
+    barCode = Column(String(255), nullable=False)  # noqa: N815
     picture = Column(Text, nullable=True)
     price = Column(Float, nullable=False)
     description = Column(Text, nullable=False)
     brand = Column(String(255))
-    category_id = Column(Integer, ForeignKey(
-        "categories.id", ondelete="CASCADE"), nullable=False)
+    category_id = Column(
+        Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False
+    )
     quantity = Column(String(255))
     nutrition = Column(JSON)
     ingredients = Column(Text)
     allergens = Column(String(255))
-    stock = relationship("Stock", back_populates="product", uselist=False,
-                         cascade="all, delete-orphan", passive_deletes=True)
-    invoice_items = relationship("InvoiceItem", back_populates="product",
-                                 cascade="all, delete-orphan", passive_deletes=True)
+    stock = relationship(
+        "Stock",
+        back_populates="product",
+        uselist=False,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    invoice_items = relationship(
+        "InvoiceItem",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     category = relationship("Category", back_populates="products")
-    cart_items = relationship("CartItem", back_populates="product",
-                              cascade="all, delete-orphan", passive_deletes=True)
-    wishlist_items = relationship("WishListItem", back_populates="product",
-                                  cascade="all, delete-orphan", passive_deletes=True)
+    cart_items = relationship(
+        "CartItem",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    wishlist_items = relationship(
+        "WishListItem",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class Category(BaseModel):
@@ -107,7 +122,10 @@ class Category(BaseModel):
     name = Column(String(255), nullable=False)
 
     # Relationships
-    products = relationship("Product", back_populates="category",)
+    products = relationship(
+        "Product",
+        back_populates="category",
+    )
 
 
 class Invoice(BaseModel):
@@ -127,8 +145,9 @@ class Invoice(BaseModel):
 class InvoiceItem(BaseModel):
     __tablename__ = "invoice_items"
 
-    product_id = Column(Integer, ForeignKey(
-        "products.id", ondelete="CASCADE"), nullable=True)
+    product_id = Column(
+        Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=True
+    )
     quantity = Column(Integer, nullable=False)
     invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=True)
     unit_price = Column(Float, nullable=False)
@@ -161,11 +180,13 @@ class Cart(BaseModel):
 class CartItem(BaseModel):
     __tablename__ = "cart_items"
 
-    product_id = Column(Integer, ForeignKey(
-        "products.id", ondelete="CASCADE"), nullable=False)
+    product_id = Column(
+        Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False
+    )
     quantity = Column(Integer, nullable=False)
-    cart_id = Column(Integer, ForeignKey(
-        "carts.id", ondelete="CASCADE"), nullable=False)
+    cart_id = Column(
+        Integer, ForeignKey("carts.id", ondelete="CASCADE"), nullable=False
+    )
 
     # Relationships
     cart = relationship("Cart", back_populates="items")
@@ -179,9 +200,7 @@ class CartItem(BaseModel):
 class Stock(BaseModel):
     __tablename__ = "stocks"
     product_id = Column(
-        Integer,
-        ForeignKey("products.id", ondelete="CASCADE"),
-        nullable=False
+        Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False
     )
     quantity = Column(Integer, nullable=False, default=0)
     # Relationships
@@ -204,13 +223,13 @@ class BlacklistToken(BaseModel):
 class WishList(BaseModel):
     __tablename__ = "wishlists"
 
-    user_id = Column(Integer, ForeignKey("users.id"),
-                     unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
 
     user = relationship("User", back_populates="wishlist", uselist=False)
 
     items = relationship(
-        "WishListItem", back_populates="wishlist", cascade="all, delete-orphan")
+        "WishListItem", back_populates="wishlist", cascade="all, delete-orphan"
+    )
 
 
 class WishListItem(BaseModel):
@@ -218,8 +237,9 @@ class WishListItem(BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     wishlist_id = Column(Integer, ForeignKey("wishlists.id"), nullable=False)
-    product_id = Column(Integer, ForeignKey(
-        "products.id", ondelete="CASCADE"), nullable=False)
+    product_id = Column(
+        Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False
+    )
 
     wishlist = relationship("WishList", back_populates="items")
     product = relationship("Product")

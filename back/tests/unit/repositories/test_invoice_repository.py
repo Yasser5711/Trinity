@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import repositories.invoice_repository as invoice_repository
 from db.models.models import Invoice
-from datetime import datetime
 
 
 def test_get_all_invoices(db_session):
@@ -39,6 +40,5 @@ def test_get_yearly_sales_repo(db_session):
 
 def test_get_monthly_sales_repo(db_session):
     now = datetime.now()
-    total = invoice_repository.get_monthly_sales(
-        db_session, now.year, now.month)
+    total = invoice_repository.get_monthly_sales(db_session, now.year, now.month)
     assert isinstance(total, (float, int))

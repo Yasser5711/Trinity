@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import Role
 from repositories import role_repository
 

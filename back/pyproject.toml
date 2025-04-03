@@ -1,16 +1,76 @@
+[tool.ruff]
+line-length = 88
+exclude = ["migrations", ".venv", "__pypackages__","**/__init__.py"]
+
+# Enable all common rule sets used in modern Python backend projects
+select = [
+  "E",      # pycodestyle errors
+  "F",      # pyflakes
+  "B",      # bugbear
+  "I",      # isort
+  "UP",     # pyupgrade
+  "C90",    # mccabe complexity
+  "N",      # pep8-naming
+  "A",      # flake8-builtins
+  "T20",    # flake8-print
+  "ASYNC",  # flake8-async
+  "S",      # flake8-bandit (security)
+]
+
+# Ignore rules that are safe to skip in FastAPI/SQLAlchemy context
+ignore = [
+  "E501",   # let black handle line length
+  "B008",   # FastAPI Depends in function args
+  "C901",   # function too complex (can be noisy)
+  "S101",   # assert statements allowed in tests
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+plugins = [
+  "pydantic.mypy",
+  "sqlalchemy.ext.mypy.plugin",
+]
+strict = true
+disable_error_code = ["attr-defined", "no-untyped-def"]
+# Fine-tune for better ergonomics
+ignore_missing_imports = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+show_error_codes = true
+exclude = 'migrations'
+
+# Helpful for Pytest test functions and fixtures
+allow_redefinition = true
+
+[tool.pydantic-mypy]
+init_typed = true
+warn_required_dynamic_aliases = true
+
 [tool.black]
 line-length = 88
-target-version = ['py311']  
-exclude = '''
-/(
-    \.git
-    | \.mypy_cache
-    | \.pytest_cache
-    | __pycache__
-    | migrations
-)/
-'''
+target-version = ['py311']
+skip-string-normalization = false
+
 [tool.isort]
-profile = "black"  # Makes isort compatible with Black
-line_length = 88
-known_third_party = ["fastapi", "pydantic", "uvicorn"]  # Add other packages as needed
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

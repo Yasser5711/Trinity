@@ -1,9 +1,6 @@
-from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
-
-from .schemas import KPI as KPIBase
+from .schemas import KPI as KPIBase  # noqa: N811
 
 
 class KPICreate(KPIBase):

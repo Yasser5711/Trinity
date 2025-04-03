@@ -4,7 +4,8 @@ include:
   - path: "docker/back/compose-dev.yml"
 
 volumes:
-  postgres_data:
+  db_data:
+  pgadmin_data:
 
 networks:
   app_network:

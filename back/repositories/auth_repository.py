@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from db.models.models import User, Role, BlacklistToken
+
+from db.models.models import BlacklistToken, Role, User
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
@@ -26,7 +27,10 @@ def get_user_by_id(db: Session, user_id: int) -> User | None:
 
 
 def token_is_blacklisted(db: Session, token: str) -> bool:
-    return db.query(BlacklistToken).filter(BlacklistToken.token == token).first() is not None
+    return (
+        db.query(BlacklistToken).filter(BlacklistToken.token == token).first()
+        is not None
+    )
 
 
 def blacklist_token(db: Session, token: str):

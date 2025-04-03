@@ -34,12 +34,10 @@ def test_create_category(db_session):
 
 
 def test_update_category(db_session, sample_category):
-    updated = category_repository.update(
-        db_session, sample_category, "Updated Name")
+    updated = category_repository.update(db_session, sample_category, "Updated Name")
     assert updated.name == "Updated Name"
 
 
 def test_delete_category(db_session, sample_category):
     category_repository.delete(db_session, sample_category)
-    assert category_repository.get_by_id(
-        db_session, sample_category.id) is None
+    assert category_repository.get_by_id(db_session, sample_category.id) is None

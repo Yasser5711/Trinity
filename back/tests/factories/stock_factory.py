@@ -1,7 +1,7 @@
 import factory
+
 from db.models.models import Stock
 from tests.factories.product_factory import ProductFactory
-from db.session import SessionLocal
 
 
 class StockFactory(factory.alchemy.SQLAlchemyModelFactory):

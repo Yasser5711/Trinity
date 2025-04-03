@@ -1,5 +1,5 @@
-from db.models.models import Role
 import repositories.role_repository as role_repository
+from db.models.models import Role
 
 
 def test_get_all_roles(db_session, sample_role):

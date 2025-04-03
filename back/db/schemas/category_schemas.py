@@ -1,4 +1,3 @@
-
 from .schemas import BaseSchema
 
 
@@ -10,7 +9,7 @@ class CategoryUpdate(BaseSchema):
     name: str
 
 
-class CategoryResponse_(BaseSchema):
+class CategoryResponse_(BaseSchema):  # noqa: N801
     id: int
     name: str
     product_count: int

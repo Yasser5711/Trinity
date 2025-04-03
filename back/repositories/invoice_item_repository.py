@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from db.models.models import InvoiceItem
 
 
@@ -6,8 +7,8 @@ def get_all(db: Session):
     return db.query(InvoiceItem).all()
 
 
-def get_by_id(db: Session, id: int):
-    return db.query(InvoiceItem).filter(InvoiceItem.id == id).first()
+def get_by_id(db: Session, invoice_item_id: int):
+    return db.query(InvoiceItem).filter(InvoiceItem.id == invoice_item_id).first()
 
 
 def create(db: Session, item: InvoiceItem):

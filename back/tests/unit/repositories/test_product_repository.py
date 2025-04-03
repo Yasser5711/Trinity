@@ -14,8 +14,7 @@ def test_get_product_by_id_repo(db_session, sample_product):
 
 
 def test_get_product_by_barcode_repo(db_session, sample_product):
-    result = product_repository.get_by_barcode(
-        db_session, sample_product.barCode)
+    result = product_repository.get_by_barcode(db_session, sample_product.barCode)
     assert result.id == sample_product.id
 
 
